@@ -6,7 +6,8 @@
 
 namespace MartynBiz\Slim\Module;
 
-use Composer\Autoload\ClassLoader;
+use Slim\App;
+use Slim\Container;
 
 /**
  * This will load modules
@@ -14,28 +15,15 @@ use Composer\Autoload\ClassLoader;
 class Initializer
 {
     /**
-     * @var Slim
-     */
-    protected $app;
-
-    /**
-     * @var array
-     */
-    protected $initializerSettings;
-
-    /**
      * @var array
      */
     protected $moduleInstances = [];
 
-    public function __construct($app, $modules=array())
+    public function __construct($settings=array())
     {
-        $this->app = $app;
-
         // build an class map of [[module => moduleClassPath], ..]
-        foreach ($modules as $module) {
-            $moduleClassName = sprintf('%s\Module', $module);
-            $this->moduleInstances[$module] = new $moduleClassName();
+        foreach ($settings['modules'] as $moduleName => $moduleClassName) {
+            $this->moduleInstances[$moduleName] = new $moduleClassName();
         }
     }
 
@@ -43,14 +31,10 @@ class Initializer
      * Load the module. This will run for all modules, use for routes mainly
      * @param string $moduleName Module name
      */
-    public function initModules()
+    public function initModules(App $app)
     {
-        $moduleInstances = $this->moduleInstances;
-        $app = $this->app;
         $container = $app->getContainer();
 
-        // $this->initClassLoader($classLoader);
-        $this->initModuleConfig();
         $this->initDependencies($container);
         $this->initMiddleware($app);
         $this->initRoutes($app);
@@ -60,46 +44,9 @@ class Initializer
      * Load the module. This will run for all modules, use for routes mainly
      * @param string $moduleName Module name
      */
-    public function getModuleConfig()
+    public function initDependencies(Container $container)
     {
         $moduleInstances = $this->moduleInstances;
-
-        $allModules = [];
-        foreach ($moduleInstances as $moduleName => $module) {
-            $moduleSettings = $module->getModuleConfig();
-            $allModules[$moduleName] = $module->getModuleConfig();
-        }
-
-        return $allModules;
-    }
-
-    /**
-     * Load the module. This will run for all modules, use for routes mainly
-     * @param string $moduleName Module name
-     */
-    public function initModuleConfig()
-    {
-        $app = $this->app;
-        $container = $app->getContainer();
-
-        $allSettings = $container['settings']->all();
-        if (!isset($allSettings['modules']) or !is_array($allSettings['modules'])) {
-            $allSettings['modules'] = [];
-        }
-
-        $allSettings['modules'] = array_merge_recursive($allSettings['modules'], $this->getModuleConfig());
-        $container['settings']->__construct( $allSettings );
-    }
-
-    /**
-     * Load the module. This will run for all modules, use for routes mainly
-     * @param string $moduleName Module name
-     */
-    public function initDependencies()
-    {
-        $moduleInstances = $this->moduleInstances;
-        $app = $this->app;
-        $container = $app->getContainer();
 
         // next, init dependencies of all modules now that we have settings, class maps etc
         foreach ($moduleInstances as $module) {
@@ -111,10 +58,9 @@ class Initializer
      * Load the module. This will run for all modules, use for routes mainly
      * @param string $moduleName Module name
      */
-    public function initMiddleware()
+    public function initMiddleware(App $app)
     {
         $moduleInstances = $this->moduleInstances;
-        $app = $this->app;
 
         // next, init app middleware of all modules now that we have settings, class maps, dependencies etc
         foreach ($moduleInstances as $module) {
@@ -126,10 +72,9 @@ class Initializer
      * Load the module. This will run for all modules, use for routes mainly
      * @param string $moduleName Module name
      */
-    public function initRoutes()
+    public function initRoutes(App $app)
     {
         $moduleInstances = $this->moduleInstances;
-        $app = $this->app;
 
         // lastly, routes
         foreach ($moduleInstances as $module) {
