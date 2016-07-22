@@ -23,7 +23,9 @@ class Initializer
     {
         // build an class map of [[module => moduleClassPath], ..]
         foreach ($settings['modules'] as $moduleName => $moduleClassName) {
-            $this->moduleInstances[$moduleName] = new $moduleClassName();
+            $module = new $moduleClassName();
+        	if (! $module instanceof ModuleInterface) throw new \Exception($moduleName . ' is not an instance of ModuleInterface');
+        	$this->moduleInstances[$moduleName] = $module;
         }
     }
 
