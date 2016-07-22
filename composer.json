@@ -1,5 +1,5 @@
 {
-    "name": "martynbiz/slim-module",
+    "name": "martynbiz/slim-module-initializer",
     "type": "library",
     "keywords": ["slim", "module"],
     "license": "MIT",
