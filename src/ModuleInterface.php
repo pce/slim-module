@@ -1,6 +1,6 @@
 <?php
 /**
- * The interface that Modules should implement 
+ * The interface that Modules should implement
  * @author Martyn Bissett <martynbissett@yahoo.co.uk>
  */
 
@@ -32,4 +32,11 @@ interface ModuleInterface
      * @return void
      */
     public function initRoutes(App $app);
+
+    // /**
+    //  * Will copy files from vendor package to project
+    //  * @param App $app
+    //  * @return void
+    //  */
+    // public function copyFiles($dest);
 }
