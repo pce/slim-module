@@ -28,10 +28,10 @@ This library expects a modules directory somewhere, and within that module direc
 modules/
 ├── Modules (namespace)
 │   └── ACMEReport
-        ├── templates/report.twig 
-        ├── ActionHandler.php 
-        └── Module.php
-        
+ \      ├── templates/report.twig 
+  |     ├── ActionHandler.php 
+  /     └── Module.php
+ ^       
 ```
 
 
@@ -44,7 +44,7 @@ $loader->add('Modules\\', __DIR__ . '/../app/modules/');
 
 
 
-setup autoloader of routes in `app/routes.php`:
+setup "autoloader" of routes in `app/routes.php`:
 
 ```
 $moduleInitializer = new \MartynBiz\Slim3Module\Initializer($app, [
@@ -54,12 +54,24 @@ $moduleInitializer = new \MartynBiz\Slim3Module\Initializer($app, [
 $moduleInitializer->initModules();
 ```
 
+Or modules file, which returns an array of Modulenames:
+```
+$moduleInitializer = new \MartynBiz\Slim3Module\Initializer($app, 
+  require __DIR__ . '/modules.php';
+);
+$moduleInitializer->initModules();
+```
+
+
+
+
 
 
 ## Module Example##
 
-- route for a ActionController,
-- init templates Dir in the module directory
+- register route for a the Module Controller,
+- add the "twig-view" templates directory in the modules own directory, usage
+  `@acme_report/index.twig`
 
 ```
 <?php
