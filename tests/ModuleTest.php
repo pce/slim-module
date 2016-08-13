@@ -1,13 +1,11 @@
 <?php
 
-use MartynBiz\Slim3Module\Module;
-
-use Slim\App;
+use MartynBiz\Slim3Module\Initializer;
 
 class ModuleTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var Windwalker\Renderer\AbstractEngineRenderer_mock
+     * @var Slim\App Mock 
      */
     protected $appMock;
 
@@ -19,10 +17,39 @@ class ModuleTest extends PHPUnit_Framework_TestCase
             ->getMock();
     }
 
-    public function test_initialization()
+    /**
+     * @test
+     */
+    public function initialization()
     {
-        $module = new Module($this->appMock);
+        $initializer = new Initializer($this->appMock);
 
-        $this->assertTrue($module instanceof Module);
+        $this->assertTrue($initializer instanceof Initializer);
+    }
+
+    /**
+     * @test
+     */
+    public function initializationWithModule()
+    {
+        $initializer = new Initializer($this->appMock, ['Hello']);
+
+        $this->assertTrue($initializer instanceof Initializer);
+    }
+
+    /**
+     * @test
+     */
+    public function initializationOfModule()
+    {
+        $this->markTestSkipped(
+            'TODO $app add container, settings.'
+        );
+
+        $initializer = new Initializer($app, ['Hello']);
+
+        $initializer->initModules();
+
+        $this->assertTrue($initializer instanceof Initializer);
     }
 }

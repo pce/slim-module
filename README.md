@@ -1,8 +1,14 @@
 # Slim v3 module #
 
+
 ## Introduction ##
 
 Modules for Slim3
+
+Fork of https://github.com/martynbiz/slim-module with the following changes:
+
+- Path of Modules (Initializer) autoload within namespace: Modules\%s\Module.php
+- README Update
 
 ## Installation ##
 
@@ -10,7 +16,7 @@ Composer
 
 ```php
 "require-dev": {
-    "martynbiz/slim3-module": "dev-master"
+    "pce/slim3-module": "dev-master"
 }
 ```
 
@@ -20,38 +26,73 @@ This library expects a modules directory somewhere, and within that module direc
 
 ```
 modules/
-├── hello
-│   └── module.php
+├── Modules (namespace)
+│   └── ACMEReport
+        ├── templates/report.twig 
+        ├── ActionHandler.php 
+        └── Module.php
+        
 ```
 
-Each module file will contain code required for that module. More advanced setups may
-include sub-directories.
 
-routes.php
+add path of modules to the loader `public/index.php`:
 
-```php
-$module = new \MartynBiz\Slim3Module\Module($app, [
-    'modules_dir' => APPLICATION_PATH . '/modules',
+```
+$loader = require __DIR__ . '/../vendor/autoload.php';
+$loader->add('Modules\\', __DIR__ . '/../app/modules/');
+```
+
+
+
+setup autoloader of routes in `app/routes.php`:
+
+```
+$moduleInitializer = new \MartynBiz\Slim3Module\Initializer($app, [
+    'Hello',
+    'ACMEReport'
 ]);
-
-$module->load('hello');
+$moduleInitializer->initModules();
 ```
 
-home/module.php
 
-```php
-$app->get('/hello/{name}', function (Request $request, Response $response) {
-    $name = $request->getAttribute('name');
-    $response->getBody()->write("Hello, $name");
 
-    return $response;
-});
+## Module Example##
+
+- route for a ActionController,
+- init templates Dir in the module directory
+
+```
+<?php
+
+namespace Modules\ACMEReport;
+
+use MartynBiz\Slim3Module\AbstractModule;
+
+use Slim\App;
+use Slim\Container;
+
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
+
+
+class Module extends AbstractModule {
+
+    public function initRoutes(App $app) 
+    {
+	$app->get('/acme/report', 'Modules\ACMEReport\ActionHandler:dispatchGet');
+    }
+
+    public function initDependencies(Container $container)
+    {
+       $container['Modules\ACMEReport\ActionHandlerModules'] = function ($container) {
+    		return new \Modules\ACMEReport\ActionHandler($container);
+	};
+
+       $container['view']->getLoader()->addPath(__DIR__ . '/templates', 'acme_report');
+
+    }
+
+}
+
 ```
 
-## Advanced Usage ##
-
-...
-
-## Modules within modules ##
-
-...
