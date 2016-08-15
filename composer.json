@@ -1,5 +1,5 @@
 {
-    "name": "martynbiz/slim-module",
+    "name": "pce/slim-module",
     "type": "library",
     "keywords": ["slim", "module"],
     "license": "MIT",
@@ -9,7 +9,14 @@
             "email": "martynbissett@yahoo.co.uk",
             "homepage": "http://martyn.biz",
             "role": "Developer"
+        },
+        {
+            "name": "Patrick C. Engel",
+            "email": "info@pc-e.org",
+            "homepage": "http://pc-e.org",
+            "role": "Developer"
         }
+ 
     ],
     "autoload": {
         "psr-4": {
